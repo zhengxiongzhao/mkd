@@ -1,47 +1,93 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Placeholder from "@tiptap/extension-placeholder";
-import { useEffect } from "react";
+import { Markdown } from "@tiptap/markdown";
+import Image from "@tiptap/extension-image";
+import { Table, TableRow, TableCell, TableHeader } from "@tiptap/extension-table";
+import TaskList from "@tiptap/extension-task-list";
+import TaskItem from "@tiptap/extension-task-item";
+import Link from "@tiptap/extension-link";
+import { useEffect, useImperativeHandle, forwardRef } from "react";
 import "./Editor.css";
 
+export interface EditorRef {
+  getMarkdown: () => string;
+}
+
 interface EditorProps {
-  content: string;
-  onUpdate: (html: string) => void;
+  markdownContent: string;
+  onUpdate?: (markdown: string) => void;
 }
 
-export function Editor({ content, onUpdate }: EditorProps) {
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: { levels: [1, 2, 3, 4, 5, 6] },
-        codeBlock: {
-          HTMLAttributes: { class: "code-block" },
-        },
-      }),
-      Placeholder.configure({
-        placeholder: "开始编辑...",
-      }),
-    ],
-    content: content,
-    onUpdate: ({ editor }) => {
-      onUpdate(editor.getHTML());
-    },
-    editorProps: {
-      attributes: {
-        class: "tiptap-editor",
+export const Editor = forwardRef<EditorRef, EditorProps>(
+  ({ markdownContent, onUpdate }, ref) => {
+    const editor = useEditor({
+      extensions: [
+        StarterKit.configure({
+          heading: { levels: [1, 2, 3, 4, 5, 6] },
+          codeBlock: {
+            HTMLAttributes: { class: "code-block" },
+          },
+        }),
+        Markdown.configure({
+          markedOptions: {
+            gfm: true,
+            breaks: false,
+          },
+        }),
+        Image.configure({
+          inline: false,
+          allowBase64: true,
+        }),
+        Table.configure({
+          resizable: false,
+        }),
+        TableRow,
+        TableCell,
+        TableHeader,
+        TaskList,
+        TaskItem.configure({
+          nested: true,
+        }),
+        Link.configure({
+          openOnClick: false,
+        }),
+      ],
+      content: markdownContent,
+      contentType: "markdown",
+      onUpdate: ({ editor }) => {
+        if (onUpdate) {
+          onUpdate(editor.getMarkdown());
+        }
       },
-    },
-  });
+      editorProps: {
+        attributes: {
+          class: "tiptap-editor",
+        },
+      },
+    });
 
-  useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content);
-    }
-  }, [content, editor]);
+    useImperativeHandle(ref, () => ({
+      getMarkdown: () => {
+        if (!editor) return "";
+        return editor.getMarkdown();
+      },
+    }));
 
-  return (
-    <div className="editor-wrapper">
-      <EditorContent editor={editor} />
-    </div>
-  );
-}
+    useEffect(() => {
+      if (editor && markdownContent !== undefined) {
+        const currentMd = editor.getMarkdown();
+        if (currentMd !== markdownContent) {
+          editor.commands.setContent(markdownContent, {
+            contentType: "markdown",
+          });
+        }
+      }
+    }, [markdownContent, editor]);
+
+    return (
+      <div className="editor-wrapper">
+        <EditorContent editor={editor} />
+      </div>
+    );
+  }
+);

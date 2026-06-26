@@ -1,23 +1,15 @@
-import { useState, useCallback } from "react";
-import { Editor } from "./components/Editor";
+import { useState, useCallback, useRef } from "react";
+import { Editor, EditorRef } from "./components/Editor";
 import { Toolbar } from "./components/Toolbar";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
-import TurndownService from "turndown";
-import { marked } from "marked";
 import "./App.css";
 
-const turndown = new TurndownService({
-  headingStyle: "atx",
-  codeBlockStyle: "fenced",
-});
-
 function App() {
-  const [content, setContent] = useState<string>("");
-  const [sourceMode, setSourceMode] = useState(false);
   const [markdownSource, setMarkdownSource] = useState("");
+  const [sourceMode, setSourceMode] = useState(false);
   const [filePath, setFilePath] = useState<string | null>(null);
-  const [htmlContent, setHtmlContent] = useState<string>("");
+  const editorRef = useRef<EditorRef>(null);
 
   const handleOpenFile = useCallback(async () => {
     const selected = await open({
@@ -27,9 +19,6 @@ function App() {
       const text = await readTextFile(selected);
       setFilePath(selected);
       setMarkdownSource(text);
-      const html = await marked(text);
-      setHtmlContent(html);
-      setContent(html);
     }
   }, []);
 
@@ -43,32 +32,32 @@ function App() {
       savePath = selected;
       setFilePath(savePath);
     }
-    const md = sourceMode ? markdownSource : content;
+    let md: string;
+    if (sourceMode) {
+      md = markdownSource;
+    } else {
+      md = editorRef.current?.getMarkdown() ?? markdownSource;
+    }
     await writeTextFile(savePath, md);
-  }, [filePath, sourceMode, markdownSource, content]);
+  }, [filePath, sourceMode, markdownSource]);
 
-  const handleEditorUpdate = useCallback((html: string) => {
-    const md = turndown.turndown(html);
-    setContent(md);
-    setMarkdownSource(md);
+  const handleEditorUpdate = useCallback((markdown: string) => {
+    setMarkdownSource(markdown);
   }, []);
 
-  const handleSourceChange = useCallback(
-    (value: string) => {
-      setMarkdownSource(value);
-      setContent(value);
-    },
-    []
-  );
+  const handleSourceChange = useCallback((value: string) => {
+    setMarkdownSource(value);
+  }, []);
 
-  const handleToggleMode = useCallback(async () => {
-    if (sourceMode) {
-      // Switching from source to editor: convert markdown to HTML
-      const html = await marked(markdownSource);
-      setHtmlContent(html);
+  const handleToggleMode = useCallback(() => {
+    if (!sourceMode) {
+      const md = editorRef.current?.getMarkdown();
+      if (md !== undefined) {
+        setMarkdownSource(md);
+      }
     }
     setSourceMode(!sourceMode);
-  }, [sourceMode, markdownSource]);
+  }, [sourceMode]);
 
   return (
     <div className="app">
@@ -89,7 +78,11 @@ function App() {
             placeholder="在此输入 Markdown 源码..."
           />
         ) : (
-          <Editor content={htmlContent} onUpdate={handleEditorUpdate} />
+          <Editor
+            ref={editorRef}
+            markdownContent={markdownSource}
+            onUpdate={handleEditorUpdate}
+          />
         )}
       </div>
     </div>
