@@ -71,7 +71,8 @@ export function ThemePicker({ onThemeChange }: ThemePickerProps) {
         onClick={() => setIsOpen(!isOpen)}
         title="选择主题"
       >
-        🎨 {currentThemeName}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="13.5" cy="6.5" r="2.5" /><circle cx="17.5" cy="10.5" r="2.5" /><circle cx="8.5" cy="7.5" r="2.5" /><circle cx="6.5" cy="12.5" r="2.5" /><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.5-.75 1.5-1.5 0-.39-.15-.74-.39-1.01-.24-.26-.38-.61-.38-1 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-4.96-4.49-9-10-9z" /></svg>
+        <span>{currentThemeName}</span>
       </button>
       {isOpen && (
         <div className="theme-dropdown">
@@ -89,10 +90,12 @@ export function ThemePicker({ onThemeChange }: ThemePickerProps) {
           ))}
           <div className="theme-dropdown-divider" />
           <button className="theme-option" onClick={handleRefreshThemes}>
-            🔄 刷新主题列表
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" /><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" /></svg>
+            <span>刷新主题列表</span>
           </button>
           <button className="theme-option" onClick={handleOpenFolder}>
-            📁 打开主题文件夹
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z" /></svg>
+            <span>打开主题文件夹</span>
           </button>
         </div>
       )}

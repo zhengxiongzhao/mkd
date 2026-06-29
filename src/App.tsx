@@ -1,9 +1,10 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Editor, EditorRef } from "./components/Editor";
 import { Toolbar } from "./components/Toolbar";
 import { FileTree } from "./components/FileTree";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import "./App.css";
 
 function App() {
@@ -13,6 +14,14 @@ function App() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [rootDir, setRootDir] = useState<string | null>(null);
   const editorRef = useRef<EditorRef>(null);
+
+  // 动态更新窗口标题为当前文件名
+  useEffect(() => {
+    const title = filePath
+      ? filePath.split("/").pop() || filePath.split("\\").pop() || "MKD Editor"
+      : "MKD Editor";
+    getCurrentWindow().setTitle(title);
+  }, [filePath]);
 
   const openFileByPath = useCallback(async (path: string) => {
     const text = await readTextFile(path);
@@ -83,7 +92,6 @@ function App() {
         onSave={handleSaveFile}
         sourceMode={sourceMode}
         onToggleMode={handleToggleMode}
-        filePath={filePath}
         sidebarVisible={sidebarVisible}
         onToggleSidebar={handleToggleSidebar}
       />

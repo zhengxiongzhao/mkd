@@ -86,8 +86,44 @@
 }
 
 .tree-node-icon {
-  font-size: 14px;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+.tree-node-icon svg {
+  color: #868e96;
+}
+
+.tree-node-icon .icon-markdown {
+  color: #339af0;
+}
+
+.tree-node-icon .icon-image {
+  color: #ae3ec9;
+}
+
+.tree-node-icon .icon-code {
+  color: #f59f00;
+}
+
+.tree-node-icon .icon-config {
+  color: #868e96;
+}
+
+.tree-node-icon .icon-style {
+  color: #e64980;
+}
+
+.tree-node-icon .icon-text {
+  color: #868e96;
+}
+
+.tree-node-icon .icon-file {
+  color: #adb5bd;
 }
 
 .tree-node-name {

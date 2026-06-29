@@ -20,37 +20,76 @@ html, body, #root {
 .toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 8px 16px;
+  padding: 0 12px;
+  padding-left: 78px; /* macOS traffic lights space */
   background: #f8f9fa;
   border-bottom: 1px solid #e9ecef;
   -webkit-app-region: drag;
-  min-height: 48px;
+  height: 38px;
+  min-height: 38px;
 }
 
-.toolbar-left {
+.toolbar-titlebar {
+  display: flex;
+  align-items: center;
+  -webkit-app-region: no-drag;
+}
+
+.titlebar-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #6c757d;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s ease;
+}
+
+.titlebar-btn:hover {
+  background: #e9ecef;
+  color: #343a40;
+}
+
+.titlebar-btn.active {
+  color: #228be6;
+}
+
+.toolbar-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-app-region: drag;
+}
+
+.toolbar-actions {
   display: flex;
   align-items: center;
   gap: 4px;
   -webkit-app-region: no-drag;
 }
 
-.toolbar-right {
-  display: flex;
-  align-items: center;
-  -webkit-app-region: no-drag;
-}
-
 .toolbar-btn {
-  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
   border: 1px solid #dee2e6;
-  border-radius: 6px;
+  border-radius: 5px;
   background: white;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   color: #495057;
   transition: all 0.15s ease;
   white-space: nowrap;
+}
+
+.toolbar-btn svg {
+  flex-shrink: 0;
 }
 
 .toolbar-btn:hover {
@@ -111,7 +150,6 @@ html, body, #root {
   color: white;
   border-color: #1c7ed6;
 }
-
 .source-editor {
   flex: 1;
   border: none;
