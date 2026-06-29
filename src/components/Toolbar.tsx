@@ -1,3 +1,5 @@
+import { ThemePicker } from "./ThemePicker";
+
 interface ToolbarProps {
   onOpen: () => void;
   onSave: () => void;
@@ -30,6 +32,8 @@ export function Toolbar({
         >
           {sourceMode ? "📝 编辑模式" : "📄 源码模式"}
         </button>
+        <div className="toolbar-separator" />
+        <ThemePicker />
       </div>
       <div className="toolbar-right">
         {filePath && (
