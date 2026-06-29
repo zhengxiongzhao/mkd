@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from "react";
 import { Editor, EditorRef } from "./components/Editor";
 import { Toolbar } from "./components/Toolbar";
+import { FileTree } from "./components/FileTree";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import "./App.css";
@@ -9,18 +10,26 @@ function App() {
   const [markdownSource, setMarkdownSource] = useState("");
   const [sourceMode, setSourceMode] = useState(false);
   const [filePath, setFilePath] = useState<string | null>(null);
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [rootDir, setRootDir] = useState<string | null>(null);
   const editorRef = useRef<EditorRef>(null);
+
+  const openFileByPath = useCallback(async (path: string) => {
+    const text = await readTextFile(path);
+    setFilePath(path);
+    setMarkdownSource(text);
+  }, []);
 
   const handleOpenFile = useCallback(async () => {
     const selected = await open({
       filters: [{ name: "Markdown", extensions: ["md", "markdown", "txt"] }],
     });
     if (selected) {
-      const text = await readTextFile(selected);
-      setFilePath(selected);
-      setMarkdownSource(text);
+      await openFileByPath(selected);
+      const dir = selected.substring(0, selected.lastIndexOf("/"));
+      setRootDir(dir);
     }
-  }, []);
+  }, [openFileByPath]);
 
   const handleSaveFile = useCallback(async () => {
     let savePath = filePath;
@@ -59,6 +68,14 @@ function App() {
     setSourceMode(!sourceMode);
   }, [sourceMode]);
 
+  const handleToggleSidebar = useCallback(() => {
+    setSidebarVisible((v) => !v);
+  }, []);
+
+  const handleFileSelect = useCallback(async (path: string) => {
+    await openFileByPath(path);
+  }, [openFileByPath]);
+
   return (
     <div className="app">
       <Toolbar
@@ -67,23 +84,36 @@ function App() {
         sourceMode={sourceMode}
         onToggleMode={handleToggleMode}
         filePath={filePath}
+        sidebarVisible={sidebarVisible}
+        onToggleSidebar={handleToggleSidebar}
       />
-      <div className="editor-container">
-        {sourceMode ? (
-          <textarea
-            className="source-editor"
-            value={markdownSource}
-            onChange={(e) => handleSourceChange(e.target.value)}
-            spellCheck={false}
-            placeholder="在此输入 Markdown 源码..."
-          />
-        ) : (
-          <Editor
-            ref={editorRef}
-            markdownContent={markdownSource}
-            onUpdate={handleEditorUpdate}
-          />
+      <div className="main-content">
+        {sidebarVisible && (
+          <div className="sidebar">
+            <FileTree
+              rootPath={rootDir}
+              onFileSelect={handleFileSelect}
+              currentFile={filePath}
+            />
+          </div>
         )}
+        <div className="editor-container">
+          {sourceMode ? (
+            <textarea
+              className="source-editor"
+              value={markdownSource}
+              onChange={(e) => handleSourceChange(e.target.value)}
+              spellCheck={false}
+              placeholder="在此输入 Markdown 源码..."
+            />
+          ) : (
+            <Editor
+              ref={editorRef}
+              markdownContent={markdownSource}
+              onUpdate={handleEditorUpdate}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

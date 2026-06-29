@@ -90,6 +90,28 @@ html, body, #root {
   overflow: hidden;
 }
 
+.main-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 240px;
+  min-width: 240px;
+  border-right: 1px solid #e9ecef;
+  background: #f8f9fa;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-btn.active {
+  background: #228be6;
+  color: white;
+  border-color: #1c7ed6;
+}
+
 .source-editor {
   flex: 1;
   border: none;

@@ -1,0 +1,103 @@
+.file-tree {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.file-tree-header {
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #868e96;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #e9ecef;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-tree-root-name {
+  user-select: none;
+}
+
+.file-tree-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 0;
+}
+
+.file-tree-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #adb5bd;
+  font-size: 13px;
+  padding: 20px;
+  text-align: center;
+}
+
+.file-tree-hint {
+  font-size: 11px;
+  margin-top: 4px;
+  color: #ced4da;
+}
+
+.file-tree-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #adb5bd;
+  font-size: 13px;
+}
+
+.tree-node {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #495057;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 4px;
+  margin: 1px 4px;
+}
+
+.tree-node:hover {
+  background: #f1f3f5;
+}
+
+.tree-node.active {
+  background: #e7f5ff;
+  color: #1971c2;
+}
+
+.tree-node.dimmed {
+  opacity: 0.5;
+}
+
+.tree-node-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.tree-node-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-node-empty {
+  font-size: 12px;
+  color: #ced4da;
+  padding: 4px 12px;
+  font-style: italic;
+}

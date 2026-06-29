@@ -6,6 +6,8 @@ interface ToolbarProps {
   sourceMode: boolean;
   onToggleMode: () => void;
   filePath: string | null;
+  sidebarVisible: boolean;
+  onToggleSidebar: () => void;
 }
 
 export function Toolbar({
@@ -14,6 +16,8 @@ export function Toolbar({
   sourceMode,
   onToggleMode,
   filePath,
+  sidebarVisible,
+  onToggleSidebar,
 }: ToolbarProps) {
   return (
     <div className="toolbar">
@@ -41,6 +45,13 @@ export function Toolbar({
             {filePath.split("/").pop() || filePath.split("\\").pop()}
           </span>
         )}
+        <button
+          className={`toolbar-btn sidebar-btn ${sidebarVisible ? "active" : ""}`}
+          onClick={onToggleSidebar}
+          title={sidebarVisible ? "隐藏文件树" : "显示文件树"}
+        >
+          📑
+        </button>
       </div>
     </div>
   );
