@@ -137,7 +137,6 @@ html, body, #root {
 
 .sidebar {
   width: 240px;
-  min-width: 240px;
   border-right: 1px solid #e9ecef;
   background: #f8f9fa;
   overflow: hidden;
@@ -149,6 +148,33 @@ html, body, #root {
   background: #228be6;
   color: white;
   border-color: #1c7ed6;
+}
+
+.outline-sidebar {
+  width: 200px;
+  border-left: 1px solid #e9ecef;
+  background: #f8f9fa;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.resize-handle {
+  width: 4px;
+  cursor: col-resize;
+  background: transparent;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.resize-handle:hover {
+  background: #339af0;
+}
+
+.toolbar-titlebar-right {
+  display: flex;
+  align-items: center;
+  -webkit-app-region: no-drag;
 }
 .source-editor {
   flex: 1;

@@ -7,6 +7,8 @@ interface ToolbarProps {
   onToggleMode: () => void;
   sidebarVisible: boolean;
   onToggleSidebar: () => void;
+  outlineVisible: boolean;
+  onToggleOutline: () => void;
 }
 
 export function Toolbar({
@@ -16,6 +18,8 @@ export function Toolbar({
   onToggleMode,
   sidebarVisible,
   onToggleSidebar,
+  outlineVisible,
+  onToggleOutline,
 }: ToolbarProps) {
   return (
     <div className="toolbar" data-tauri-drag-region>
@@ -56,6 +60,20 @@ export function Toolbar({
         </button>
         <div className="toolbar-separator" />
         <ThemePicker />
+      </div>
+      <div className="toolbar-titlebar-right">
+        <button
+          className={`titlebar-btn outline-toggle-btn ${outlineVisible ? "active" : ""}`}
+          onClick={onToggleOutline}
+          title={outlineVisible ? "隐藏大纲" : "显示大纲"}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="21" y1="10" x2="7" y2="10" />
+            <line x1="21" y1="6" x2="3" y2="6" />
+            <line x1="21" y1="14" x2="7" y2="14" />
+            <line x1="21" y1="18" x2="3" y2="18" />
+          </svg>
+        </button>
       </div>
     </div>
   );

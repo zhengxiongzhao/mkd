@@ -1,9 +1,15 @@
 /* MKD Editor - Default Theme */
+.toolbar{
+  zoom: 0.9; 
+}
+
 .tiptap-editor {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; */
+  font-family: taylenPixel, mp-quote, -apple-system-font, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", Arial, sans-serif;
   font-size: 16px;
-  line-height: 1.7;
+  line-height: 1.6;
   color: #1a1a1a;
+  zoom: 0.9; 
 }
 
 .tiptap-editor h1 {
@@ -101,7 +107,7 @@
 .tiptap-editor th,
 .tiptap-editor td {
   border: 1px solid #ddd;
-  padding: 0.5em 0.75em;
+  padding: 0em 0.75em;
   text-align: left;
   vertical-align: top;
 }
