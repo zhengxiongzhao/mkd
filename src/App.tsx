@@ -3,10 +3,12 @@ import { Editor, EditorRef } from "./components/Editor";
 import { Toolbar } from "./components/Toolbar";
 import { FileTree } from "./components/FileTree";
 import { OutlinePanel, HeadingItem } from "./components/OutlinePanel";
-import { open, save } from "@tauri-apps/plugin-dialog";
-import { readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
+import { readTextFile, writeTextFile, stat } from "@tauri-apps/plugin-fs";
+import { save } from "@tauri-apps/plugin-dialog";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { convertFileSrc } from "@tauri-apps/api/core";
+import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import "./App.css";
 
 function useResizable(initialWidth: number, minWidth: number, maxWidth: number) {
@@ -52,14 +54,17 @@ function App() {
   const [markdownSource, setMarkdownSource] = useState("");
   const [sourceMode, setSourceMode] = useState(false);
   const [filePath, setFilePath] = useState<string | null>(null);
+  const [dirty, setDirty] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [outlineVisible, setOutlineVisible] = useState(true);
   const [headings, setHeadings] = useState<HeadingItem[]>([]);
   const [rootDir, setRootDir] = useState<string | null>(null);
   const editorRef = useRef<EditorRef>(null);
+  const isLoadingRef = useRef(false);
+  const savedContentRef = useRef("");
 
   const sidebar = useResizable(240, 140, 450);
-  const outline = useResizable(200, 120, 400);
+  const outline = useResizable(260, 120, 400);
 
   // 将 markdown 中的本地图片路径转换为 asset 协议 URL
   const convertImagePaths = useCallback((md: string, dir: string): string => {
@@ -100,27 +105,42 @@ function App() {
     );
   }, []);
 
-  // 动态更新窗口标题为当前文件名
+  // 动态更新窗口标题为当前文件名（未保存时显示 *）
   useEffect(() => {
-    const title = filePath
+    let title = filePath
       ? filePath.split("/").pop() || filePath.split("\\").pop() || "MKD Editor"
       : "MKD Editor";
+    if (dirty) title += " *";
     getCurrentWindow().setTitle(title);
-  }, [filePath]);
+  }, [filePath, dirty]);
 
   const openFileByPath = useCallback(async (path: string) => {
     const text = await readTextFile(path);
     const dir = path.substring(0, path.lastIndexOf("/"));
     setFilePath(path);
+    setDirty(false);
+    isLoadingRef.current = true;
     // 将本地图片路径转为 asset URL 以便 webview 显示
-    setMarkdownSource(convertImagePaths(text, dir));
+    const converted = convertImagePaths(text, dir);
+    savedContentRef.current = converted;
+    setMarkdownSource(converted);
   }, [convertImagePaths]);
 
   const handleOpenFile = useCallback(async () => {
-    const selected = await open({
-      filters: [{ name: "Markdown", extensions: ["md", "markdown", "txt"] }],
-    });
-    if (selected) {
+    const selected = await invoke<string | null>("open_file_or_folder");
+    if (!selected) return;
+    // 判断是文件还是文件夹
+    try {
+      const info = await stat(selected);
+      if (info.isDirectory) {
+        setRootDir(selected);
+      } else {
+        await openFileByPath(selected);
+        const dir = selected.substring(0, selected.lastIndexOf("/"));
+        setRootDir(dir);
+      }
+    } catch {
+      // fallback: 尝试作为文件打开
       await openFileByPath(selected);
       const dir = selected.substring(0, selected.lastIndexOf("/"));
       setRootDir(dir);
@@ -147,14 +167,22 @@ function App() {
     const dir = savePath.substring(0, savePath.lastIndexOf("/"));
     md = restoreImagePaths(md, dir);
     await writeTextFile(savePath, md);
+    savedContentRef.current = markdownSource;
+    setDirty(false);
   }, [filePath, sourceMode, markdownSource, restoreImagePaths]);
 
   const handleEditorUpdate = useCallback((markdown: string) => {
     setMarkdownSource(markdown);
+    if (isLoadingRef.current) {
+      isLoadingRef.current = false;
+    } else {
+      setDirty(markdown !== savedContentRef.current);
+    }
   }, []);
 
   const handleSourceChange = useCallback((value: string) => {
     setMarkdownSource(value);
+    setDirty(value !== savedContentRef.current);
   }, []);
 
   const handleToggleMode = useCallback(() => {
@@ -182,6 +210,18 @@ function App() {
   const handleHeadingClick = useCallback((pos: number) => {
     editorRef.current?.scrollToPos(pos);
   }, []);
+
+  // 监听原生菜单事件（Cmd+O / Cmd+S 通过系统菜单触发）
+  useEffect(() => {
+    const unlisten = listen<string>("menu-event", (event) => {
+      if (event.payload === "open") {
+        handleOpenFile();
+      } else if (event.payload === "save") {
+        handleSaveFile();
+      }
+    });
+    return () => { unlisten.then(fn => fn()); };
+  }, [handleOpenFile, handleSaveFile]);
 
   // 源码模式下通过正则提取标题
   const sourceHeadings = useMemo((): HeadingItem[] => {
