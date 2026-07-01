@@ -64,7 +64,7 @@ function App() {
   const savedContentRef = useRef("");
 
   const sidebar = useResizable(240, 140, 450);
-  const outline = useResizable(260, 120, 400);
+  const outline = useResizable(260, 140, 450);
 
   // 将 markdown 中的本地图片路径转换为 asset 协议 URL
   const convertImagePaths = useCallback((md: string, dir: string): string => {

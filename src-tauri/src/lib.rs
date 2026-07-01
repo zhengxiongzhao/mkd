@@ -49,12 +49,27 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .invoke_handler(tauri::generate_handler![open_file_or_folder])
         .setup(|app| {
+            // App 菜单（macOS 系统标准：关于、隐藏、退出等）
+            let app_menu = Submenu::with_items(app, "MKD", true, &[
+                &PredefinedMenuItem::about(app, None, None)?,
+                &PredefinedMenuItem::separator(app)?,
+                &PredefinedMenuItem::services(app, None)?,
+                &PredefinedMenuItem::separator(app)?,
+                &PredefinedMenuItem::hide(app, None)?,
+                &PredefinedMenuItem::hide_others(app, None)?,
+                &PredefinedMenuItem::show_all(app, None)?,
+                &PredefinedMenuItem::separator(app)?,
+                &PredefinedMenuItem::quit(app, None)?,
+            ])?;
+
             // File 菜单
             let open_item = MenuItem::with_id(app, "open", "打开", true, Some("CmdOrCtrl+O"))?;
             let save_item = MenuItem::with_id(app, "save", "保存", true, Some("CmdOrCtrl+S"))?;
             let file_menu = Submenu::with_items(app, "File", true, &[
                 &open_item,
                 &save_item,
+                &PredefinedMenuItem::separator(app)?,
+                &PredefinedMenuItem::close_window(app, None)?,
             ])?;
 
             // Edit 菜单（系统标准编辑操作）
@@ -68,7 +83,15 @@ pub fn run() {
                 &PredefinedMenuItem::select_all(app, None)?,
             ])?;
 
-            let menu = Menu::with_items(app, &[&file_menu, &edit_menu])?;
+            // Window 菜单（最小化、缩放、全屏）
+            let window_menu = Submenu::with_items(app, "Window", true, &[
+                &PredefinedMenuItem::minimize(app, None)?,
+                &PredefinedMenuItem::maximize(app, None)?,
+                &PredefinedMenuItem::separator(app)?,
+                &PredefinedMenuItem::fullscreen(app, None)?,
+            ])?;
+
+            let menu = Menu::with_items(app, &[&app_menu, &file_menu, &edit_menu, &window_menu])?;
             app.set_menu(menu)?;
 
             // 监听菜单事件，emit 到前端
