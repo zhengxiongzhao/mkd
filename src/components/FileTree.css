@@ -33,12 +33,39 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   height: 100%;
   color: #adb5bd;
   font-size: 13px;
-  padding: 20px;
+  padding: 32px 20px 24px;
   text-align: center;
+}
+
+.file-tree-empty-top {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-tree-empty-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.file-tree-open-btn {
+  min-width: 140px;
+  justify-content: center;
+}
+
+.file-tree-shortcut {
+  font-size: 11px;
+  color: #ced4da;
+  letter-spacing: 0.5px;
 }
 
 .file-tree-hint {

@@ -13,9 +13,10 @@ interface FileTreeProps {
   rootPath: string | null;
   onFileSelect: (path: string) => void;
   currentFile: string | null;
+  onOpen: () => void;
 }
 
-export function FileTree({ rootPath, onFileSelect, currentFile }: FileTreeProps) {
+export function FileTree({ rootPath, onFileSelect, currentFile, onOpen }: FileTreeProps) {
   const [tree, setTree] = useState<FileEntry[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -62,10 +63,22 @@ export function FileTree({ rootPath, onFileSelect, currentFile }: FileTreeProps)
   }, [rootPath, loadDirectory]);
 
   if (!rootPath) {
+    const isMac =
+      typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
+    const shortcut = isMac ? "⌘O" : "Ctrl+O";
     return (
       <div className="file-tree-empty">
-        <p>未打开文件夹</p>
-        <p className="file-tree-hint">打开文件后将自动显示所在目录</p>
+        <div className="file-tree-empty-top">
+          <p>未打开文件夹</p>
+          <p className="file-tree-hint">打开文件后将自动显示所在目录</p>
+        </div>
+        <div className="file-tree-empty-actions">
+          <button className="toolbar-btn file-tree-open-btn" onClick={onOpen} title={`打开 (${shortcut})`}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z" /></svg>
+            <span>打开</span>
+          </button>
+          <span className="file-tree-shortcut">{shortcut}</span>
+        </div>
       </div>
     );
   }

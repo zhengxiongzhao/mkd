@@ -10,6 +10,7 @@
         "@tauri-apps/plugin-opener": "^2",
         "@tiptap/extension-image": "^3.27.1",
         "@tiptap/extension-link": "^3.27.1",
+        "@tiptap/extension-placeholder": "^3.27.1",
         "@tiptap/extension-table": "^3.27.1",
         "@tiptap/extension-task-item": "^3.27.1",
         "@tiptap/extension-task-list": "^3.27.1",
@@ -264,6 +265,8 @@
     "@tiptap/extension-ordered-list": ["@tiptap/extension-ordered-list@3.27.1", "https://registry.npmmirror.com/@tiptap/extension-ordered-list/-/extension-ordered-list-3.27.1.tgz", { "peerDependencies": { "@tiptap/extension-list": "3.27.1" } }, "sha512-GYrKqD//9nHJ2r80uXqbDMzRnFpGzbaEQRTSGaO/SH7DvXWFMow8evkOdjQ7PCQO07jNjJo75+A85Jwu3Ov3AA=="],
 
     "@tiptap/extension-paragraph": ["@tiptap/extension-paragraph@3.27.1", "https://registry.npmmirror.com/@tiptap/extension-paragraph/-/extension-paragraph-3.27.1.tgz", { "peerDependencies": { "@tiptap/core": "3.27.1" } }, "sha512-7K7eo1gruOgAsnbK+GCV23AUVUI0cL1bTig8HaPneoFMVbig7vddk8jNLKBWO8TXVbG7TuHdnDN4F98vdtwh5Q=="],
+
+    "@tiptap/extension-placeholder": ["@tiptap/extension-placeholder@3.27.1", "https://registry.npmmirror.com/@tiptap/extension-placeholder/-/extension-placeholder-3.27.1.tgz", { "peerDependencies": { "@tiptap/extensions": "3.27.1" } }, "sha512-lhcNDcczQ75yJOSywCHb58Hmtg1aPL/2TdYmeLPxVrP048D7rRs133sfONcgyyw0AvhnfmPOkHLTv3QtKSowhw=="],
 
     "@tiptap/extension-strike": ["@tiptap/extension-strike@3.27.1", "https://registry.npmmirror.com/@tiptap/extension-strike/-/extension-strike-3.27.1.tgz", { "peerDependencies": { "@tiptap/core": "3.27.1" } }, "sha512-Y3DW1jlSlCNCyMGHP3+3qBNNPS83wuFz4RTYGjZtvRRTCRh7apZme9XRWMq1rN5mJ2Cr7fKocA2/5Bs13KgN6Q=="],
 

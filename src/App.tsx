@@ -267,6 +267,7 @@ function App() {
                 rootPath={rootDir}
                 onFileSelect={handleFileSelect}
                 currentFile={filePath}
+                onOpen={handleOpenFile}
               />
             </div>
             <div
